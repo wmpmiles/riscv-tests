@@ -1,0 +1,49 @@
+#include "riscv_spe_test.h"
+#include "test_macros.h"
+
+#define RESET_SP addi sp, zero, 0x0
+
+RVTEST_RV64U
+RVTEST_CODE_BEGIN
+
+  RESET_SP
+
+  // standard pipelined value
+  TEST_CASE( 1, sp,  0x0, addi sp, zero,  0x1; )
+  TEST_CASE( 2, sp, 0x10, addi sp, zero, 0x10; )
+
+  RESET_SP
+  
+  // value from multiplication unit
+  TEST_CASE( 3, sp, 0x0, addi t0, zero,  0x1; addi t1, zero, 0x1; mul sp, t0, t1 )
+  TEST_CASE( 4, sp, 0x0, addi t0, zero, 0x10; addi t1, zero, 0x1; mul sp, t0, t1 )
+
+  RESET_SP
+
+  // value from division unit (not entirely sure if this is separate from mul)
+  TEST_CASE( 5, sp, 0x0, addi t0, zero,  0x1; addi t1, zero, 0x1; div sp, t0, t1 )
+  TEST_CASE( 6, sp, 0x0, addi t0, zero, 0x10; addi t1, zero, 0x1; div sp, t0, t1 )
+
+  RESET_SP
+
+  // values from dmem response
+  TEST_CASE( 7, sp,  0x0, lw sp, tdat1 )
+  TEST_CASE( 8, sp, 0x10, lw sp, tdat2 )
+
+  // values from CSR, can't figure out how to read/write from csr's succesfully at the moment
+  //TEST_CASE(  9, sp,  0x1, csrwi mcause,  0x1; csrr sp, mcause )
+  //TEST_CASE( 10, sp, 0x10, csrwi mcause, 0x10; csrr sp, mcause )
+
+  TEST_PASSFAIL
+
+RVTEST_CODE_END
+
+RVTEST_DATA_BEGIN
+
+  TEST_DATA
+
+tdat:
+tdat1: .word 0x00000001
+tdat2: .word 0x00000010
+
+RVTEST_DATA_END
