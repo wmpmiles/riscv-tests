@@ -133,6 +133,9 @@ _start:
   sll sp, sp, STKSHIFT
   add sp, sp, tp
 
+  csrwi 0x7c0, 0x3
+  csrw  0x7c2, sp
+
   j _init
 
   .align 2

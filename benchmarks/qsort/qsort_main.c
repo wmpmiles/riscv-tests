@@ -136,6 +136,7 @@ void sort(size_t n, type arr[])
 
 int main( int argc, char* argv[] )
 {
+  write_csr(0x7c1, read_csr(0x7c2) + -640);
 #if PREALLOCATE
   // If needed we preallocate everything in the caches
   sort(DATA_SIZE, verify_data);
